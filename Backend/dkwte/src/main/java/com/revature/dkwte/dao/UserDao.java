@@ -1,5 +1,7 @@
 package com.revature.dkwte.dao;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
@@ -37,6 +39,35 @@ public class UserDao {
 		 * DataAccessException and throw that exception instead.
 		 */
 		return user;
+	}
+
+	@Transactional
+	public User signUp(User user) {
+		logger.info("UserDao.signUp() invoked");
+
+		User signUpUser = new User();
+
+		signUpUser.setFirstName(user.getFirstName());
+		signUpUser.setLastName(user.getLastName());
+		signUpUser.setPhoneNumber(user.getPhoneNumber());
+		signUpUser.setEmail(user.getEmail());
+		signUpUser.setPassword(user.getPassword());
+		signUpUser.setUserRole(user.getUserRole());
+
+		entityManager.persist(signUpUser);
+
+		return signUpUser;
+	}
+
+	@Transactional
+	public List<User> getUserByEmail(String email) {
+		logger.info("UserDao.getUserByEmail() invoked");
+
+		List<User> users = entityManager.createQuery("FROM User u", User.class).getResultList();
+
+		logger.info("users {}", users);
+
+		return users;
 	}
 
 }

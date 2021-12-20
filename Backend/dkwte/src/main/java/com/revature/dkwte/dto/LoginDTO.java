@@ -1,15 +1,15 @@
 package com.revature.dkwte.dto;
 
-public class LoginDTO {
+public class LoginDto {
 
 	private String email;
 	private String password;
 
-	public LoginDTO() {
+	public LoginDto() {
 		super();
 	}
 
-	public LoginDTO(String email, String password) {
+	public LoginDto(String email, String password) {
 		super();
 		this.email = email;
 		this.password = password;
@@ -48,7 +48,7 @@ public class LoginDTO {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		LoginDTO other = (LoginDTO) obj;
+		LoginDto other = (LoginDto) obj;
 		if (email == null) {
 			if (other.email != null)
 				return false;
@@ -64,7 +64,7 @@ public class LoginDTO {
 
 	@Override
 	public String toString() {
-		return "LoginDTO [email=" + email + ", password=" + password + "]";
+		return "LoginDto [email=" + email + ", password=" + password + "]";
 	}
 
 }

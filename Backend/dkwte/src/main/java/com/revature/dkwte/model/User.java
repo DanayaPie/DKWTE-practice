@@ -5,7 +5,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 
 @Entity
 public class User {
@@ -20,7 +19,7 @@ public class User {
 	@Column(name = "last_name", nullable = false)
 	private String lastName;
 
-	@Column(name = "phone_number", nullable = false, length = 10)
+	@Column(name = "phone_number", nullable = false)
 	private String phoneNumber;
 
 	@Column(name = "email", nullable = false, unique = true)
@@ -29,21 +28,21 @@ public class User {
 	@Column(name = "password", nullable = false)
 	private String password;
 
-	@ManyToOne
-	private UserRole role;
+	@Column(name = "user_role", nullable = false)
+	private String userRole;
 
 	public User() {
 		super();
 	}
 
-	public User(String firstName, String lastName, String phoneNumber, String email, String password, UserRole role) {
+	public User(String firstName, String lastName, String phoneNumber, String email, String password, String userRole) {
 		super();
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.phoneNumber = phoneNumber;
 		this.email = email;
 		this.password = password;
-		this.role = role;
+		this.userRole = userRole;
 	}
 
 	public int getUserId() {
@@ -94,12 +93,12 @@ public class User {
 		this.password = password;
 	}
 
-	public UserRole getRole() {
-		return role;
+	public String getUserRole() {
+		return userRole;
 	}
 
-	public void setRole(UserRole role) {
-		this.role = role;
+	public void setUserRole(String userRole) {
+		this.userRole = userRole;
 	}
 
 	@Override
@@ -111,8 +110,8 @@ public class User {
 		result = prime * result + ((lastName == null) ? 0 : lastName.hashCode());
 		result = prime * result + ((password == null) ? 0 : password.hashCode());
 		result = prime * result + ((phoneNumber == null) ? 0 : phoneNumber.hashCode());
-		result = prime * result + ((role == null) ? 0 : role.hashCode());
 		result = prime * result + userId;
+		result = prime * result + ((userRole == null) ? 0 : userRole.hashCode());
 		return result;
 	}
 
@@ -150,12 +149,12 @@ public class User {
 				return false;
 		} else if (!phoneNumber.equals(other.phoneNumber))
 			return false;
-		if (role == null) {
-			if (other.role != null)
-				return false;
-		} else if (!role.equals(other.role))
-			return false;
 		if (userId != other.userId)
+			return false;
+		if (userRole == null) {
+			if (other.userRole != null)
+				return false;
+		} else if (!userRole.equals(other.userRole))
 			return false;
 		return true;
 	}
@@ -163,7 +162,7 @@ public class User {
 	@Override
 	public String toString() {
 		return "User [userId=" + userId + ", firstName=" + firstName + ", lastName=" + lastName + ", phoneNumber="
-				+ phoneNumber + ", email=" + email + ", password=" + password + ", role=" + role + "]";
+				+ phoneNumber + ", email=" + email + ", password=" + password + ", userRole=" + userRole + "]";
 	}
 
 }

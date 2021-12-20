@@ -14,8 +14,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.revature.dkwte.dto.LoginDTO;
+import com.revature.dkwte.dto.LoginDto;
 import com.revature.dkwte.exception.InvalidLoginException;
+import com.revature.dkwte.exception.InvalidParameterException;
 import com.revature.dkwte.model.User;
 import com.revature.dkwte.service.UserService;
 import com.revature.dkwte.utility.ValidateUtil;
@@ -35,15 +36,18 @@ public class AuthenticationController {
 	@Autowired
 	private HttpServletResponse res;
 
+	@Autowired
+	private ValidateUtil validateUtil;
+
 	// constants
 	private static final String CURRENTUSER = "currentuser";
 
 	@PostMapping(path = "/login")
-	public ResponseEntity<Object> login(@RequestBody LoginDTO loginDto) {
+	public ResponseEntity<Object> login(@RequestBody LoginDto loginDto) {
 		logger.info("AuthenticationController.login() invoked");
 
 		try {
-			ValidateUtil.verifyEmailAndPassword(loginDto.getEmail(), loginDto.getPassword());
+			validateUtil.verifyEmailAndPassword(loginDto.getEmail(), loginDto.getPassword());
 
 			User user = this.userService.getUserByEmailAndPassword(loginDto.getEmail(), loginDto.getPassword());
 
@@ -68,9 +72,9 @@ public class AuthenticationController {
 	@GetMapping(path = "/loginstatus")
 	public ResponseEntity<Object> logiinStatus() {
 		logger.info("AuthenticationController.logiinStatus() invoked");
-		
+
 		User currentlyLoggedInUser = (User) req.getSession().getAttribute(CURRENTUSER);
-		
+
 		logger.info("currentlyLoggedInUser {}", currentlyLoggedInUser);
 
 		if (currentlyLoggedInUser != null) {
@@ -89,16 +93,24 @@ public class AuthenticationController {
 
 		return ResponseEntity.status(200).body("Sucessfully logged out");
 	}
-	
-	@PostMapping(path = "/signup")
-	public ResponseEntity<Object> signUp() {
-		logger.info("AuthenticationController.signUp() invoked");
-		
-		ValidateUtil.verifySignUp(user);
 
-		User user = userService.signUp(user);
-		
-		return ResponseEntity.status(200).body(user);
+	@PostMapping(path = "/signup")
+	public ResponseEntity<Object> signUp(@RequestBody User user) throws InvalidParameterException {
+		logger.info("AuthenticationController.signUp() invoked");
+
+		try {
+
+			validateUtil.verifySignUp(user);
+
+			User u = userService.signUp(user);
+
+			return ResponseEntity.status(200).body(u);
+
+		} catch (InvalidParameterException e) {
+
+			return ResponseEntity.status(400).body(e.getMessage());
+		}
+
 	}
 
 }
