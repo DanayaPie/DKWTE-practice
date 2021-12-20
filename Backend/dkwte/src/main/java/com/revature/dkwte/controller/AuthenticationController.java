@@ -1,5 +1,7 @@
 package com.revature.dkwte.controller;
 
+import java.security.NoSuchAlgorithmException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -43,7 +45,7 @@ public class AuthenticationController {
 	private static final String CURRENTUSER = "currentuser";
 
 	@PostMapping(path = "/login")
-	public ResponseEntity<Object> login(@RequestBody LoginDto loginDto) {
+	public ResponseEntity<Object> login(@RequestBody LoginDto loginDto) throws NoSuchAlgorithmException {
 		logger.info("AuthenticationController.login() invoked");
 
 		try {
@@ -95,7 +97,8 @@ public class AuthenticationController {
 	}
 
 	@PostMapping(path = "/signup")
-	public ResponseEntity<Object> signUp(@RequestBody User user) throws InvalidParameterException {
+	public ResponseEntity<Object> signUp(@RequestBody User user)
+			throws InvalidParameterException, NoSuchAlgorithmException {
 		logger.info("AuthenticationController.signUp() invoked");
 
 		try {

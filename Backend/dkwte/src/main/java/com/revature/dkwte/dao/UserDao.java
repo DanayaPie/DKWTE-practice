@@ -3,6 +3,7 @@ package com.revature.dkwte.dao;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
@@ -60,14 +61,20 @@ public class UserDao {
 	}
 
 	@Transactional
-	public List<User> getUserByEmail(String email) {
+	public User getUserByEmail(String email) {
 		logger.info("UserDao.getUserByEmail() invoked");
 
-		List<User> users = entityManager.createQuery("FROM User u", User.class).getResultList();
+		try {
+			User user = entityManager.createQuery("FROM User u WHERE u.email = :email", User.class)
+					.setParameter("email", email).getSingleResult();
 
-		logger.info("users {}", users);
+			logger.info("users {}", user);
 
-		return users;
+			return user;
+		} catch (NoResultException e) {
+			return null;
+		}
+
 	}
 
 }

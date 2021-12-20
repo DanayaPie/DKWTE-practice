@@ -1,5 +1,6 @@
 package com.revature.dkwte.utility;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -16,10 +17,12 @@ import com.revature.dkwte.service.UserService;
 
 public class ValidateUtil {
 
+	Logger logger = LoggerFactory.getLogger(ValidateUtil.class);
+
 	@Autowired
 	UserService userService;
 
-	Logger logger = LoggerFactory.getLogger(ValidateUtil.class);
+	static List<String> userRoleList = Arrays.asList("member", "admin");
 
 	public void verifyEmailAndPassword(String email, String password) throws InvalidLoginException {
 		logger.info("ValidteUtil.verifyEmailAndPassword() invoked");
@@ -110,17 +113,17 @@ public class ValidateUtil {
 		 */
 		logger.info("Check if email already exist");
 
-		List<User> users = userService.getUserByEmail(user.getEmail());
+		User databaseUser = userService.getUserByEmail(user.getEmail());
 
-		logger.debug("users {}", users);
+		logger.debug("users {}", user);
 		logger.debug("user {}", user);
 
-		for (User userElement : users) {
-			logger.debug("in loop");
+		logger.debug("in loop");
 
-			logger.debug("usersE {} user {}", userElement.getEmail(), user.getEmail());
+//		logger.debug("usersE {} user {}", userElement.getEmail(), user.getEmail());
 
-			if (StringUtils.equalsAnyIgnoreCase(userElement.getEmail().trim(), user.getEmail().trim())) {
+		if(databaseUser != null) {
+			if (StringUtils.equalsAnyIgnoreCase(databaseUser.getEmail().trim(), user.getEmail().trim())) {
 
 				throw new InvalidParameterException("Email already exist.");
 			}
@@ -158,6 +161,17 @@ public class ValidateUtil {
 		if (!user.getEmail().matches(regex)) {
 			throw new InvalidParameterException("Invalid Email.");
 		}
+
+		/*-
+		 *  user role verification
+		 */
+		logger.info("user role verification");
+
+		if (user.getUserRole().trim().toLowerCase() != null
+				&& !userRoleList.contains(user.getUserRole().trim().toLowerCase())) {
+			throw new InvalidParameterException("User role must be 'member' or 'admin'.");
+		}
+
 	}
 
 }
